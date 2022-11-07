@@ -1,10 +1,14 @@
 package rslack.tracker.service.impl;
 
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rslack.tracker.dao.ItemDAO;
 import rslack.tracker.entity.ItemEntity;
 import rslack.tracker.enums.ItemCategoryEnums;
+import rslack.tracker.exceptions.ItemNotSavedException;
 import rslack.tracker.payload.AddItemRequest;
 import rslack.tracker.payload.AddItemResponse;
 import rslack.tracker.payload.GetItemResponse;
@@ -21,7 +25,10 @@ import static rslack.tracker.utils.RandomGenerator.generateRandomUUID;
 public class ItemServiceImpl implements ItemService {
 
     private static final Logger logger = LoggerFactory.getLogger(ItemServiceImpl.class);
-    List<ItemEntity> itemList = new ArrayList<>();
+    private List<ItemEntity> itemList = new ArrayList<>();
+
+    @Autowired
+    private ItemDAO itemDAO;
 
     @Override
     public List<GetItemResponse> getItems() {
@@ -39,8 +46,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public AddItemResponse addItem(AddItemRequest request) {
-        return null;
+    public AddItemResponse addItem(AddItemRequest request) throws ItemNotSavedException {
+        ItemEntity newItem = ItemEntity.builder()
+                .id(generateRandomUUID())
+                .name(request.getName())
+                .brand(request.getBrand())
+                .category(request.getCategory())
+                .quantity(request.getQuantity())
+                .price(request.getPrice())
+                .build();
+
+        ItemEntity savedItem = itemDAO.save(newItem);
+        if (savedItem == null) {
+            throw new ItemNotSavedException("Item was not saved!");
+        }
+
+        return toAddItemResponse("Item saved", savedItem.getId());
     }
 
     private void initializeItemList() {
@@ -60,5 +81,12 @@ public class ItemServiceImpl implements ItemService {
 
         itemList.add(item);
         itemList.add(item2);
+    }
+
+    private AddItemResponse toAddItemResponse(String msg, String id) {
+        return AddItemResponse.builder()
+                .id(id)
+                .message(msg)
+                .build();
     }
 }

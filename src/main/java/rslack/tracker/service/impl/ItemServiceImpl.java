@@ -32,8 +32,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<GetItemResponse> getItems() {
-        initializeItemList();
-        logger.info("itemList has been initialized!");
+
+        logger.info("Fetching item list...");
+        List<ItemEntity> checkDBItems = itemDAO.getAllItems();
+        if ( checkDBItems != null ) {
+            itemList = checkDBItems;
+        }
+        else {
+            initializeItemList();
+        }
 
         List<GetItemResponse> response = new ArrayList<>();
         for (ItemEntity item : itemList) {

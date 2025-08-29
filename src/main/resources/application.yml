@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: inventory
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+    restart:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - prometheus
+          - shutdown
+          - restart
+  health:
+    probes:
+      enabled: true

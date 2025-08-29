@@ -6,10 +6,8 @@ import rslack.tracker.dao.ItemDAO;
 import rslack.tracker.entity.ItemEntity;
 import rslack.tracker.repository.ItemRepository;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.UUID;
 
 @Service
 public class ItemDAOImpl implements ItemDAO {
@@ -29,16 +27,7 @@ public class ItemDAOImpl implements ItemDAO {
 
     @Override
     public List<ItemEntity> getAllItems() {
-
-        List<ItemEntity> itemList = new ArrayList<>();
-        itemRepository.findAll().forEach(itemList::add);
-        return itemList;
-//        List<ItemEntity> itemList = new ArrayList<>();
-//        Iterator<ItemEntity> iterator = itemRepository.findAll().iterator();
-//        while (iterator.hasNext()) {
-//            itemList.add(iterator.next());
-//        }
-//        return itemList;
+        return itemRepository.findAll();
     }
 
     @Override
@@ -47,7 +36,7 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     @Override
-    public void deleteItem(String id) {
+    public void deleteItem(UUID id) {
         itemRepository.deleteById(id);
     }
 }

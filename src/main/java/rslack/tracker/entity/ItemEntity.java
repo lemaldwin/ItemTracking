@@ -7,6 +7,7 @@ import rslack.tracker.enums.ItemCategoryEnums;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -19,7 +20,7 @@ public class ItemEntity {
 
     @NotNull
     @Id
-    String id;
+    UUID id;
 
     @NotNull
     String name;

@@ -1,10 +1,10 @@
 package rslack.tracker.service.impl;
 
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import rslack.tracker.dao.ItemDAO;
 import rslack.tracker.entity.ItemEntity;
 import rslack.tracker.enums.ItemCategoryEnums;
@@ -17,9 +17,9 @@ import rslack.tracker.service.ItemService;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static rslack.tracker.utils.MapperUtils.toGetItemsResponse;
-import static rslack.tracker.utils.RandomGenerator.generateRandomUUID;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -32,10 +32,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<GetItemResponse> getItems() {
-
         logger.info("Fetching item list...");
         List<ItemEntity> checkDBItems = itemDAO.getAllItems();
-        if ( checkDBItems != null ) {
+        if (CollectionUtils.isEmpty(checkDBItems)) {
             itemList = checkDBItems;
         }
         else {
@@ -54,14 +53,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public AddItemResponse addItem(AddItemRequest request) throws ItemNotSavedException {
-        ItemEntity newItem = ItemEntity.builder()
-                .id(generateRandomUUID())
-                .name(request.getName())
-                .brand(request.getBrand())
-                .category(request.getCategory())
-                .quantity(request.getQuantity())
-                .price(request.getPrice())
-                .build();
+        ItemEntity newItem = generateItemEntityFromRequest(request);
 
         ItemEntity savedItem = itemDAO.save(newItem);
         if (savedItem == null) {
@@ -71,26 +63,37 @@ public class ItemServiceImpl implements ItemService {
         return toAddItemResponse("Item saved", savedItem.getId());
     }
 
+    private ItemEntity generateItemEntityFromRequest(AddItemRequest request) {
+        return ItemEntity.builder()
+                .id(UUID.randomUUID())
+                .name(request.getName())
+                .brand(request.getBrand())
+                .category(request.getCategory())
+                .quantity(request.getQuantity())
+                .price(request.getPrice())
+                .build();
+    }
+
     private void initializeItemList() {
         ItemEntity item = new ItemEntity();
         item.setName("Candy");
         item.setBrand("Maxx");
         item.setCategory(ItemCategoryEnums.FOOD);
         item.setPrice(BigDecimal.valueOf(1));
-        item.setId(generateRandomUUID());
+        item.setId(UUID.randomUUID());
 
         ItemEntity item2 = new ItemEntity();
         item2.setName("Alcohol");
         item2.setBrand("Green cross");
         item2.setCategory(ItemCategoryEnums.HYGIENE);
         item2.setPrice(BigDecimal.valueOf(25));
-        item2.setId(generateRandomUUID());
+        item2.setId(UUID.randomUUID());
 
         itemList.add(item);
         itemList.add(item2);
     }
 
-    private AddItemResponse toAddItemResponse(String msg, String id) {
+    private AddItemResponse toAddItemResponse(String msg, UUID id) {
         return AddItemResponse.builder()
                 .id(id)
                 .message(msg)

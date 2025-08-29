@@ -3,6 +3,7 @@ package rslack.tracker.payload;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetItemResponse {
-    String id;
+    UUID id;
     String name;
     String quantity;
     BigDecimal price;

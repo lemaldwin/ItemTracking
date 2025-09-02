@@ -24,7 +24,7 @@ public class ItemDAOImpl implements ItemDAO {
 
     @Override
     public ItemEntity update(ItemEntity itemEntity) {
-        return null;
+        return itemRepository.save(itemEntity);
     }
 
     @Override
@@ -34,11 +34,11 @@ public class ItemDAOImpl implements ItemDAO {
 
     @Override
     public List<ItemEntity> findAll() {
-        return List.of();
+        return itemRepository.findAll();
     }
 
     @Override
     public void delete(UUID id) {
-
+        itemRepository.deleteById(id);
     }
 }

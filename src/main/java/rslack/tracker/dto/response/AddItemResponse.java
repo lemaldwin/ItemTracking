@@ -1,18 +1,14 @@
 package rslack.tracker.dto.response;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import rslack.tracker.dto.ItemDTO;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class AddItemResponse {
-    private String status;
-    private String traceId;
-    private String code;
-    private String message;
+@SuperBuilder
+public class AddItemResponse extends BaseResponse {
     private ItemDTO item;
-
 }

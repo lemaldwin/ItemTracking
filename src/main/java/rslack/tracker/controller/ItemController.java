@@ -22,7 +22,7 @@ public class ItemController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<AddItemResponse> addItem (@RequestBody AddItemRequest request) throws Exception {
+    public ResponseEntity<AddItemResponse> addItem(@RequestBody AddItemRequest request) throws Exception {
         AddItemResponse response = itemService.addItem(request);
         return new ResponseEntity<>(response , HttpStatus.OK);
     }
